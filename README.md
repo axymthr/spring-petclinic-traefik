@@ -20,17 +20,6 @@ You can then access petclinic here: http://localhost:8080/
 ![Spring Petclinic Microservices screenshot](./docs/application-screenshot.png?lastModify=1596391473)
 
 
-
-
-## Compiling and pushing to Cloud Foundry:
-
-The samples below are using Tanzu Application Service (previously Pivotal Cloud Foundry) as the target Cloud Foundry deployment, some adjustments may be needed for other Cloud Foundry distributions.
-
-Please make sure you have the latest `cf` cli installed: https://docs.cloudfoundry.org/cf-cli/install-go-cli.html  
-For more information on Tanzu Application Service, see: https://docs.pivotal.io/application-service/2-10/overview/dev.html  
-For a list of available Cloud Foundry distributions, see: https://www.cloudfoundry.org/certified-platforms/  
-For local testing and development, you can use PCF Dev: https://docs.pivotal.io/pcf-dev/  
-
 This application uses Wavefront as a SaaS that can provide free Spring Boot monitoring and Open Tracing for your application. If you'd like to remove the Wavefront integration, please remove the `wavefront` user-provided service reference from [manifest.yml](./manifest.yml). 
 
 Otherwise, generate a free wavefront token by running one of the apps, for example:
@@ -56,57 +45,6 @@ https://wavefront.surf/us/AAA4s5f8xJ9yD
 ```
 
 You free account has now been created.
-
-Create a user-provided service for Wavefront using the data above. For example:
-
-```
-cf cups -p '{"uri": "https://wavefront.surf", "api-token": "2e41f7cf-1111-2222-3333-7397a56113ca", "application-name": "spring-petclinic-cloudfoundry", "fremium": "true"}' wavefront
-```
-If your operator deployed the wavefront proxy in your Cloud Foundry environment, point the URI to the proxy instead. You can obtain the value of the IP and port by creating a service key of the wavefront proxy and viewing the resulting JSON file. 
-
-Contine with creating the services and deploying the application's microservices. A sample is available at `scripts/deployToCloudFoundry.sh`. Note that some of the services' plans may be different in your environment, so please review before executing. For example, you want want to fork the [spring-petclinic-cloud-config](https://github.com/spring-petclinic/spring-petclinic-cloud-config.git) repository if you want to make changes to the configuration.
-
-```
-echo "Creating Required Services..."
-{
-  cf create-service -c '{ "git": { "uri": "https://github.com/spring-petclinic/spring-petclinic-cloud-config.git", "periodic": true }, "count": 3 }' p.config-server standard config &
-  cf create-service p.service-registry standard registry & 
-  cf create-service p.mysql db-small customers-db &
-  cf create-service p.mysql db-small vets-db &
-  cf create-service p.mysql db-small visits-db &
-  sleep 5
-} &> /dev/null
-until [ `cf service config | grep -c "succeeded"` -ge 1  ] && [ `cf service registry | grep -c "succeeded"` -ge 1  ] && [ `cf service customers-db | grep -c "succeeded"` -ge 1  ] && [ `cf service vets-db | grep -c "succeeded"` -ge 1  ] && [ `cf service visits-db | grep -c "succeeded"` -ge 1  ]
-do
-  echo -n "."
-done
-
-mvn clean package -Pcloud
-cf push --no-start
-
-cf add-network-policy api-gateway --destination-app vets-service --protocol tcp --port 8080
-cf add-network-policy api-gateway --destination-app customers-service --protocol tcp --port 8080
-cf add-network-policy api-gateway --destination-app visits-service --protocol tcp --port 8080
-
-cf start vets-service & cf start visits-service & cf start customers-service & cf start api-gateway &
-```
-
-You can now access your application by querying the route for the `api-gateway`:
-
-```
-✗ cf apps
-Getting apps in org pet-clinic / space pet-clinic as user@email.com...
-OK
-
-name                requested state   instances   memory   disk   urls
-api-gateway         started           1/1         1G       1G     api-gateway.apps.mysite.com
-customers-service   started           1/1         1G       1G     customers-service.apps.internal
-vets-service        started           1/1         1G       1G     vets-service.apps.internal
-visits-service      started           1/1         1G       1G     visits-service.apps.internal
-
-```
-
-Access your route (like `api-gateway.apps.mysite.com` above) to see the application.
 
 Access the one-time URL you received when bootstraping Wavefront to see Zipkin traces and other monitoring of your microservices:
 
@@ -388,13 +326,6 @@ This [spring-petclinic-cloud](https://github.com/spring-petclinic/spring-petclin
 hosted in a special GitHub org: [spring-petclinic](https://github.com/spring-petclinic).
 If you have a special interest in a different technology stack
 that could be used to implement the Pet Clinic then please join the community there.
-
-
-# Contributing
-
-The [issue tracker](https://github.com/spring-petclinic/spring-petclinic-microservices/issues) is the preferred channel for bug reports, features requests and submitting pull requests.
-
-For pull requests, editor preferences are available in the [editor config](.editorconfig) for easy use in common text editors. Read more and download plugins at <http://editorconfig.org>.
 
 
 [Configuration repository]: https://github.com/spring-petclinic/spring-petclinic-microservices-config
