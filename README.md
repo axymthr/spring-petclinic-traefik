@@ -5,8 +5,6 @@
 This microservices branch was initially derived from the [microservices version](https://github.com/spring-petclinic/spring-petclinic-microservices) to demonstrate how to split sample Spring application into [microservices](http://www.martinfowler.com/articles/microservices.html).
 To achieve that goal we use Spring Cloud Gateway, Spring Cloud Circuit Breaker, Spring Cloud Config, Spring Cloud Sleuth, Resilience4j, Micrometer and the Eureka Service Discovery from the [Spring Cloud Netflix](https://github.com/spring-cloud/spring-cloud-netflix) technology stack. While running on Kubernetes, some components (such as Spring Cloud Config and Eureka Service Discovery) are replaced with Kubernetes-native features such as config maps and Kubernetes DNS resolution.
 
-This fork also demostrates the use of free distributed tracing with Tanzu Observability by Wavefront, which provides cloud-based monitoring of  Spring Boot applications with 5 days of history.
-
 
 ## Understanding the Spring Petclinic application
 
@@ -59,13 +57,7 @@ Create the `spring-petclinic` namespace for Spring petclinic:
 kubectl apply -f k8s/init-namespace/ 
 ```
 
-Create a Kubernetes secret to store the URL and API Token of Wavefront (replace values with your own real ones):
-
-```
-kubectl create secret generic wavefront -n spring-petclinic --from-literal=wavefront-url=https://wavefront.surf --from-literal=wavefront-api-token=2e41f7cf-1111-2222-3333-7397a56113ca
-```
-
-Create the Wavefront proxy pod, and the various Kubernetes services that will be used later on by our deployments:
+The various Kubernetes services that will be used later on by our deployments:
 
 ```
 kubectl apply -f k8s/init-services
@@ -80,16 +72,6 @@ api-gateway         LoadBalancer   10.7.250.24    <pending>     80:32675/TCP    
 customers-service   ClusterIP      10.7.245.64    <none>        8080/TCP            36s
 vets-service        ClusterIP      10.7.245.150   <none>        8080/TCP            36s
 visits-service      ClusterIP      10.7.251.227   <none>        8080/TCP            35s
-wavefront-proxy     ClusterIP      10.7.253.85    <none>        2878/TCP,9411/TCP   37s
-```
-
-Verify the wavefront proxy is running:
-
-```
-✗ kubectl get pods -n spring-petclinic
-NAME                              READY   STATUS    RESTARTS   AGE
-wavefront-proxy-dfbd4b695-fdd6t   1/1     Running   0          36s
-
 ```
 
 ### Settings up databases with helm
@@ -139,7 +121,6 @@ vets-service-85cb8677df-l5xpj        1/1     Running   0          4m2s
 visits-db-mysql-master-0             1/1     Running   0          11m
 visits-db-mysql-slave-0              1/1     Running   0          11m
 visits-service-654fffbcc7-zj2jw      1/1     Running   0          4m2s
-wavefront-proxy-dfbd4b695-fdd6t      1/1     Running   0          14m
 ```
 
 Get the `EXTERNAL-IP` of the API Gateway:
@@ -151,13 +132,6 @@ api-gateway   LoadBalancer   10.7.250.24   34.1.2.22   80:32675/TCP   18m
 ```
 
 You can now brose to that IP in your browser and see the application running.
-
-You should also see monitoring and traces from Wavefront under the application name `spring-petclinic-k8s`:
-
-![Wavefront dashboard scree](./docs/wavefront-k8s.png)
-
-
-
 
 
 ## Starting services locally without Docker
