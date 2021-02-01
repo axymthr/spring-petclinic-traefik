@@ -19,42 +19,6 @@ You can then access petclinic here: http://localhost:8080/
 ![Spring Petclinic Microservices screenshot](./docs/application-screenshot.png?lastModify=1596391473)
 
 
-This application uses Wavefront as a SaaS that can provide free Spring Boot monitoring and Open Tracing for your application. If you'd like to remove the Wavefront integration, please remove the `wavefront` user-provided service reference from [manifest.yml](./manifest.yml). 
-
-Otherwise, generate a free wavefront token by running one of the apps, for example:
-
-```bash
-cd spring-petclinic-api-gateway
-mvn spring-boot:run
-```
-
-You will see something like this in the logs:
-
-```
-A Wavefront account has been provisioned successfully and the API token has been saved to disk.
-
-To share this account, make sure the following is added to your configuration:
-
-	management.metrics.export.wavefront.api-token=2e41f7cf-1111-2222-3333-7397a56113ca
-	management.metrics.export.wavefront.uri=https://wavefront.surf
-
-Connect to your Wavefront dashboard using this one-time use link:
-https://wavefront.surf/us/AAA4s5f8xJ9yD
-
-```
-
-You free account has now been created.
-
-Access the one-time URL you received when bootstraping Wavefront to see Zipkin traces and other monitoring of your microservices:
-
-![Wavefront dashboard scree](./docs/wavefront-summary.png)
-
-Since we've included `brave.mysql8` in our `pom.xml`, the traces even show the various DB queries traces:
-
-![Wavefront dashboard scree](./docs/wavefront-traces.png)
-
-
-
 ## Compiling and pushing to Kubernetes
 
 This get a little bit more complicated when deploying to Kubernetes, since we need to manage Docker images, exposing services and more yaml. But we can pull through!

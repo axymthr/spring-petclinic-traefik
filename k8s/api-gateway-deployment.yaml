@@ -45,8 +45,6 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: kubernetes
-        - name: MANAGEMENT_METRICS_EXPORT_WAVEFRONT_URI
-          value: proxy://wavefront-proxy.spring-petclinic.svc.cluster.local:2878
         ports:
         - containerPort: 8080
       restartPolicy: Always

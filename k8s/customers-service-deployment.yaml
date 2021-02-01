@@ -46,19 +46,7 @@ spec:
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: kubernetes
-        - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://customers-db-mysql.spring-petclinic.svc.cluster.local:3306/service_instance_db?queryInterceptors=brave.mysql8.TracingQueryInterceptor&exceptionInterceptors=brave.mysql8.TracingExceptionInterceptor&zipkinServiceName=customers-db
-        - name: SPRING_DATASOURCE_USERNAME
-          value: root
-        - name: SPRING_DATASOURCE_PASSWORD
-          valueFrom:
-             secretKeyRef:
-               name: customers-db-mysql
-               key: mysql-root-password
-        - name: MANAGEMENT_METRICS_EXPORT_WAVEFRONT_URI
-          value: proxy://wavefront-proxy.spring-petclinic.svc.cluster.local:2878
         ports:
         - containerPort: 8080
-        resources: {}
       restartPolicy: Always
 status: {}
