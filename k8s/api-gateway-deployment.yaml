@@ -20,7 +20,7 @@ spec:
       containers:
       - image: ${REPOSITORY_PREFIX}/api-gateway:latest
         name: api-gateway
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
             port: 8080

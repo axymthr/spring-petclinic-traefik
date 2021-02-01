@@ -20,7 +20,7 @@ spec:
       containers:
       - image: ${REPOSITORY_PREFIX}/vets-service:latest
         name: vets-service
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
             port: 8080

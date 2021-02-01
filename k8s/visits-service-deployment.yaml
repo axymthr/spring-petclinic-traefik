@@ -20,7 +20,7 @@ spec:
       containers:
       - image: ${REPOSITORY_PREFIX}/visits-service:latest
         name: visits-service
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
             port: 8080
