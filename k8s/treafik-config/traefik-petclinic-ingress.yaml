@@ -12,3 +12,21 @@ spec:
         - name: api-gateway
           namespace : spring-petclinic
           port: 80
+    - match: (Host(`petclinic.local`) && Path(`/api/vet`))
+      kind: Rule
+      services:
+        - name: vets-service
+          namespace : spring-petclinic
+          port: 8080
+    - match: (Host(`petclinic.local`) && Path(`/api/customer`))
+      kind: Rule
+      services:
+        - name: customers-service
+          namespace :  spring-petclinic
+          port: 8080
+    - match: (Host(`petclinic.local`) && Path(`/api/visit`))
+      kind: Rule
+      services:
+        - name: visits-service
+          namespace : spring-petclinic
+          port: 8080
