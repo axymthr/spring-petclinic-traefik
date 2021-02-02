@@ -1,0 +1,14 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: petclinic
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`petclinic.local`)
+      kind: Rule
+      services:
+        - name: api-gateway
+          namespace : spring-petclinic
+          port: 80

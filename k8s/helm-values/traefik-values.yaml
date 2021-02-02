@@ -1,0 +1,4 @@
+additionalArguments:
+  - "--metrics.prometheus=true"
+  - "--accesslog"
+  - "--accesslog.format=json"
