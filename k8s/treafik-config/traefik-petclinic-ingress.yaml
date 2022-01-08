@@ -10,6 +10,58 @@ spec:
       - /api/visit
 ---
 apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  name: ui-traefik-service
+  namespace: default
+
+spec:
+  weighted:
+    services:
+      - name: api-gateway
+        namespace: spring-petclinic
+        port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  name: vets-traefik-service
+  namespace: default
+
+spec:
+  weighted:
+    services:
+      - name: vets-service
+        namespace: spring-petclinic
+        port: 8080
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  name: visits-traefik-service
+  namespace: default
+
+spec:
+  weighted:
+    services:
+      - name: visits-service
+        namespace: spring-petclinic
+        port: 8080
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: TraefikService
+metadata:
+  name: customers-traefik-service
+  namespace: default
+
+spec:
+  weighted:
+    services:
+      - name: customers-service
+        namespace: spring-petclinic
+        port: 8080
+---
+apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: petclinic
@@ -17,33 +69,29 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`petclinic.local`)
+    - match: HostRegexp(`{host:.+}`)
       kind: Rule
       services:
-        - name: api-gateway
-          namespace : spring-petclinic
-          port: 80
-    - match: (Host(`petclinic.local`) && PathPrefix(`/api/vet`))
+        - name: ui-traefik-service
+          kind : TraefikService
+    - match: PathPrefix(`/api/vet`)
       kind: Rule
       services:
-        - name: vets-service
-          namespace : spring-petclinic
-          port: 8080
+        - name: vets-traefik-service
+          kind: TraefikService
       middlewares:
         - name: petclinic-stripprefix
-    - match: (Host(`petclinic.local`) && PathPrefix(`/api/customer`))
+    - match: PathPrefix(`/api/customer`)
       kind: Rule
       services:
-        - name: customers-service
-          namespace :  spring-petclinic
-          port: 8080
+        - name: customers-traefik-service
+          kind : TraefikService
       middlewares:
         - name: petclinic-stripprefix
-    - match: (Host(`petclinic.local`) && PathPrefix(`/api/visit`))
+    - match: PathPrefix(`/api/visit`)
       kind: Rule
       services:
-        - name: visits-service
-          namespace : spring-petclinic
-          port: 8080
+        - name: visits-traefik-service
+          kind : TraefikService
       middlewares:
         - name: petclinic-stripprefix
