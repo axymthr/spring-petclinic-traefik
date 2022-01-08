@@ -40,13 +40,12 @@ spec:
           limits:
             memory: 1Gi
           requests:
-            cpu: 2000m
-            memory: 1Gi
+            cpu: 25m
+            memory: 128Mi
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: kubernetes
         ports:
         - containerPort: 8080
-        resources: {}
       restartPolicy: Always
 status: {}

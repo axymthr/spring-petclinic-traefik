@@ -1,12 +1,12 @@
 additionalArguments:
-#  - "--log.level=INFO"
-#  - "--metrics.prometheus=true"
+  - "--log.level=INFO"
+  - "--metrics.prometheus=true"
   - "--accesslog"
-#  - "--accesslog.format=json"
-#  - "--tracing=true"
-#  - "--tracing.jaeger=true" # default
-#  - "--tracing.jaeger.samplingServerURL=http://simplest-agent.observability.svc.cluster.local:5778/sampling"
-#  - "--tracing.jaeger.localAgentHostPort=simplest-agent.observability.svc.cluster.local:6831"
+  - "--accesslog.format=json"
+  - "--tracing=true"
+  - "--tracing.jaeger=true" # default
+  - "--tracing.jaeger.samplingServerURL=http://all-in-one-agent.observability.svc.cluster.local:5778/sampling"
+  - "--tracing.jaeger.localAgentHostPort=all-in-one-agent.observability.svc.cluster.local:6831"
 #  - "--accesslog.bufferingsize=100"
 #  - "--accesslog.filters.statuscodes=200,300-302"
 #  - "--accesslog.filters.retryattempts"
@@ -17,8 +17,4 @@ additionalArguments:
   - "--accesslog.fields.headers.names.User-Agent=keep"
 #  - "--accesslog.fields.headers.names.Authorization=drop"
 #  - "--accesslog.fields.headers.names.Content-Type=keep"
-service:
-  type: NodePort
-ports:
-  traefik:
-    expose: true
+

@@ -1,0 +1,19 @@
+filebeatConfig:
+  filebeat.yml: |
+    filebeat.inputs:
+    - type: container
+      paths:
+        - /var/log/containers/traefik*.log
+      json.add_error_key: true
+      json.keys_under_root: true
+      fields_under_root: true
+      processors:
+      - add_kubernetes_metadata:
+          host: ${NODE_NAME}
+          matchers:
+          - logs_path:
+              logs_path: "/var/log/containers/"
+    output.elasticsearch:
+      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+    setup.dashboards.enabled: true
+    setup.kibana.host: 'kibana-kibana:5601'

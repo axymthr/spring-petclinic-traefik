@@ -68,13 +68,36 @@ Verify the services are available:
 ```
 ✗ kubectl get svc -n spring-petclinic
 NAME                TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)             AGE
-api-gateway         LoadBalancer   10.7.250.24    <pending>     80:32675/TCP        36s
+api-gateway         ClusterIP      10.7.250.24    <none>        80/TCP              36s
 customers-service   ClusterIP      10.7.245.64    <none>        8080/TCP            36s
 vets-service        ClusterIP      10.7.245.150   <none>        8080/TCP            36s
 visits-service      ClusterIP      10.7.251.227   <none>        8080/TCP            35s
 ```
 
+In this fork, api-gateway service is set to ClusterIP as we are going to use Traefik as our Ingress controller/API gateway.
+
+### Setting up Traefik
+
+Traefik can be installed in the default namespace or in the spring-petclininc namespace via Helm
+
+```
+helm repo add traefik https://containous.github.io/traefik-helm-chart
+helm repo update
+helm install -f k8s/helm-values/traefik-values.yaml traefik traefik/traefik
+```
+
+### Exposing petclinic in Traefik
+Next we apply the gateway routing configuration as Traefik CRD
+
+```
+kubectl apply -f k8s/treafik-config/traefik-petclinic-ingress.yaml 
+```
+
+The applied rules expect a host entry of *petclinic.local*. This can be changed to a public DNS name. For local use make an entry in hosts file
+
 ### Settings up databases with helm
+This is currently optional as the services are deployed with hsql mode enabled. The overhead was too much to run 3 separate MySQL instances on local k8s cluster.
+Enabling it in the service configuration is trivial enough, however on a managed cloud provider it may be easier to use an external managed DB rather than deploying MySQL on K8s. Adjust the configuration accordingly. 
 
 We'll now need to deploy our databases. For that, we'll use helm. You'll need helm 3 and above since we're not using Tiller in this deployment.
 
@@ -131,7 +154,7 @@ NAME          TYPE           CLUSTER-IP    EXTERNAL-IP      PORT(S)        AGE
 api-gateway   LoadBalancer   10.7.250.24   34.1.2.22   80:32675/TCP   18m
 ```
 
-You can now brose to that IP in your browser and see the application running.
+You can now browse to that IP in your browser and see the application running.
 
 
 ## Starting services locally without Docker

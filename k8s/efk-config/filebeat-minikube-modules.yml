@@ -1,0 +1,15 @@
+filebeatConfig:
+  filebeat.yml: |
+    filebeat.modules:
+    - module: traefik
+      access:
+        enabled: true
+        var.paths: ["/var/log/containers/traefik*.log"]
+    filebeat.config:
+      modules:
+        enabled: true
+        path: ${path.config}/modules.d/*.yml
+    output.elasticsearch:
+      hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}']
+    setup.dashboards.enabled: true
+    setup.kibana.host: 'kibana-kibana:5601'
